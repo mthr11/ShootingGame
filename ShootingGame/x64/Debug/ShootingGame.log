@@ -1,0 +1,20 @@
+﻿  Actor.cpp
+  AnimSpriteComponent.cpp
+  CollisionComponent.cpp
+  Component.cpp
+  Crow.cpp
+  ELaser.cpp
+  Enemy.cpp
+  Explosion.cpp
+  Game.cpp
+  HUD.cpp
+  InputComponent.cpp
+  Math.cpp
+  MoveComponent.cpp
+  Owl.cpp
+  Player.cpp
+  SLaser.cpp
+  SpriteComponent.cpp
+  UIScreen.cpp
+  コードを生成中...
+  ShootingGame.vcxproj -> C:\Users\幹浩\Downloads\FirstShootingGame-master\x64\Debug\ShootingGame.exe
