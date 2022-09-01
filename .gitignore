@@ -1,1 +1,5 @@
 .vs/
+ShootingGame/Debug/
+ShootingGame/x64/
+x64/Debug/
+*.user

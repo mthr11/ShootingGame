@@ -9,12 +9,13 @@
   Game.cpp
   HUD.cpp
   InputComponent.cpp
+  Owl.cpp
+  SLaser.cpp
+  Main.cpp
   Math.cpp
   MoveComponent.cpp
-  Owl.cpp
   Player.cpp
-  SLaser.cpp
   SpriteComponent.cpp
   UIScreen.cpp
   コードを生成中...
-  ShootingGame.vcxproj -> C:\Users\幹浩\Downloads\FirstShootingGame-master\x64\Debug\ShootingGame.exe
+  ShootingGame.vcxproj -> C:\Users\幹浩\Downloads\ShootingGame\x64\Debug\ShootingGame.exe
