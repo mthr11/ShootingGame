@@ -13,6 +13,7 @@
 #include "CollisionComponent.h"
 #include "ELaser.h"
 #include "Explosion.h"
+#include "Texture.h"
 
 Owl::Owl(Game* game, Vector2 pos)
 	:Enemy(game, pos)
@@ -22,7 +23,7 @@ Owl::Owl(Game* game, Vector2 pos)
 
 	/* SpriteComponentÇê∂ê¨ */
 	asc = new AnimSpriteComponent(this, 140);
-	std::vector<SDL_Texture*> anim = {
+	std::vector<Texture*> anim = {
 		game->GetTexture("Assets/Owl/OwlHovering01.png"),
 		game->GetTexture("Assets/Owl/OwlHovering02.png"),
 		game->GetTexture("Assets/Owl/OwlHovering03.png"),

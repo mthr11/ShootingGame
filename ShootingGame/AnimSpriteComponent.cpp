@@ -44,7 +44,7 @@ void AnimSpriteComponent::Update(float deltaTime)
 	}
 }
 
-void AnimSpriteComponent::SetAnimTextures(const std::vector<SDL_Texture*>& textures, bool loop)
+void AnimSpriteComponent::SetAnimTextures(const std::vector<Texture*>& textures, bool loop)
 {
 	mAnimTextures = textures;
 	mLoop = loop;

@@ -13,6 +13,7 @@
 #include "CollisionComponent.h"
 #include "ELaser.h"
 #include "Explosion.h"
+#include "Texture.h"
 
 Crow::Crow(Game* game, Vector2 pos)
 	:Enemy(game, pos)
@@ -22,7 +23,7 @@ Crow::Crow(Game* game, Vector2 pos)
 
 	/* SpriteComponentÇê∂ê¨ */
 	asc = new AnimSpriteComponent(this, 140);
-	std::vector<SDL_Texture*> anim = {
+	std::vector<Texture*> anim = {
 		game->GetTexture("Assets/Crow/Crow01.png"),
 		game->GetTexture("Assets/Crow/Crow02.png"),
 		game->GetTexture("Assets/Crow/Crow03.png")

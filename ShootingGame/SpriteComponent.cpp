@@ -9,6 +9,7 @@
 #include "SpriteComponent.h"
 #include "Actor.h"
 #include "Game.h"
+#include "Texture.h"
 
 SpriteComponent::SpriteComponent(Actor* owner, int drawOrder)
 	:Component(owner)
@@ -39,7 +40,7 @@ void SpriteComponent::Draw(SDL_Renderer* renderer)
 
 		// Draw (have to convert angle from radians to degrees, and clockwise to counter)
 		SDL_RenderCopyEx(renderer,
-			mTexture,
+			mTexture->GetTexture(),
 			nullptr,
 			&r,
 			-Math::ToDegrees(mOwner->GetRotation()),
@@ -48,9 +49,10 @@ void SpriteComponent::Draw(SDL_Renderer* renderer)
 	}
 }
 
-void SpriteComponent::SetTexture(SDL_Texture* texture)
+void SpriteComponent::SetTexture(Texture* texture)
 {
 	mTexture = texture;
 	// Set width/height
-	SDL_QueryTexture(texture, nullptr, nullptr, &mTexWidth, &mTexHeight);
+	mTexWidth = texture->GetWidth();
+	mTexHeight = texture->GetHeight();
 }

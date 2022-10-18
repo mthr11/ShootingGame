@@ -31,7 +31,7 @@ public:
 
 	struct SDL_Renderer* GetRenderer() { return mRenderer; }
 	class HUD* GetHUD() { return mHUD; }
-	SDL_Texture* GetTexture(const std::string& fileName);
+	class Texture* GetTexture(const std::string& fileName);
 
 	// Manage UI stack
 	const std::vector<class UIScreen*>& GetUIStack() { return mUIStack; }
@@ -77,7 +77,7 @@ private:
 	void UnloadData();
 
 	// Map of textures loade
-	std::unordered_map<std::string, SDL_Texture*> mTextures;
+	std::unordered_map<std::string, class Texture*> mTextures;
 
 	// All the actors in the game
 	std::vector<class Actor*> mActors;

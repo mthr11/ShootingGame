@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------
 
 #include "Game.h"
-#include "SDL_image.h"
+#include <SDL_image.h>
 #include <algorithm>
 #include "Actor.h"
 #include "SpriteComponent.h"
@@ -17,6 +17,7 @@
 #include "UIScreen.h"
 #include "HUD.h"
 #include <iostream>
+#include "Texture.h"
 
 Game::Game()
 	:mWindow(nullptr)
@@ -255,41 +256,34 @@ void Game::UnloadData()
 	// Destroy textures
 	for (auto i : mTextures)
 	{
-		SDL_DestroyTexture(i.second);
+		SDL_DestroyTexture(i.second->GetTexture());
 	}
 	mTextures.clear();
 }
 
-SDL_Texture* Game::GetTexture(const std::string& fileName)
+Texture* Game::GetTexture(const std::string& fileName)
 {
-	SDL_Texture* tex = nullptr;
-	// Is the texture already in the map?
+	Texture* tex = nullptr;
 	auto iter = mTextures.find(fileName);
+
 	if (iter != mTextures.end())
 	{
 		tex = iter->second;
 	}
 	else
 	{
-		// Load from file
-		SDL_Surface* surf = IMG_Load(fileName.c_str());
-		if (!surf)
+		tex = new Texture();
+		if (tex->Load(fileName, mRenderer))
 		{
-			SDL_Log("Failed to load texture file %s", fileName.c_str());
-			return nullptr;
+			mTextures.emplace(fileName, tex);
 		}
-
-		// Create texture from surface
-		tex = SDL_CreateTextureFromSurface(mRenderer, surf);
-		SDL_FreeSurface(surf);
-		if (!tex)
+		else
 		{
-			SDL_Log("Failed to convert surface to texture for %s", fileName.c_str());
-			return nullptr;
+			delete tex;
+			tex = nullptr;
 		}
-
-		mTextures.emplace(fileName.c_str(), tex);
 	}
+
 	return tex;
 }
 

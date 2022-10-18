@@ -11,6 +11,7 @@
 #include "CollisionComponent.h"
 #include "Player.h"
 #include "Owl.h"
+#include "Texture.h"
 
 HUD::HUD(Game* game)
 	:UIScreen(game)
@@ -20,7 +21,6 @@ HUD::HUD(Game* game)
 	mBossHealth = mGame->GetTexture("Assets/Health/BossHealthGauge.png");
 	mGameClear = mGame->GetTexture("Assets/GAMECLEAR_8x7.png");
 	mGameOver = mGame->GetTexture("Assets/GAMEOVER_8x7.png");
-	SDL_QueryTexture(mBossHealth, nullptr, nullptr, &mBHTexWidth, &mBHTexHeight);
 }
 
 HUD::~HUD()
@@ -34,13 +34,17 @@ void HUD::Update(float deltaTime)
 
 void HUD::Draw(SDL_Renderer* renderer)
 {
+	float scale = 0.f;
+
 	/* プレイヤーのヘルス表示 */
 	int h = 0;
-	if (mGame->GetState() == Game::EGameplay || mGame->GetState() == Game::EGameClear)
+	if (mGame->GetState() == Game::EGameplay || mGame->GetState() == Game::EGameClear) {
 		h = mGame->GetPlayer()->GetHealth();
+	}
 	for (int i = 0; i < MAX_PLAYER_HEALTH; i++) {
-		SDL_Texture* healthTex = h ? mHealthOn : mHealthOff;
-		DrawTexture(renderer, healthTex, Vector2(5.0f, WINDOW_HEIGHT - 53.0f - 48.0f * i), 2.0f);
+		Texture* healthTex = h ? mHealthOn : mHealthOff;
+		scale = 2.f;
+		DrawTexture(renderer, healthTex, Vector2(5.f, WINDOW_HEIGHT - 5.f - healthTex->GetHeight() * scale * (1 + i)), scale);
 		if (h > 0) h--;
 	}
 
@@ -48,6 +52,7 @@ void HUD::Draw(SDL_Renderer* renderer)
 	if (GetGame()->GetWaveState() == Game::EWave2) {
 		Enemy* boss = GetGame()->GetBossEnemy();
 		float bossHealth = (float)(boss->GetHealth());
+		scale = 1.f;
 
 		SDL_FRect r;
 		r.w = bossHealth / (float)MAX_OWL_HEALTH;
@@ -55,15 +60,17 @@ void HUD::Draw(SDL_Renderer* renderer)
 		r.x = 1.0f - bossHealth / (float)MAX_OWL_HEALTH;
 		r.y = 0.0f;
 
-		DrawTextureEx(renderer, mBossHealth, &r, Vector2(WINDOW_WIDTH / 2 - mBHTexWidth / 2, 5.0f), 1.0f);
+		DrawTextureEx(renderer, mBossHealth, &r, Vector2((WINDOW_WIDTH - mBossHealth->GetWidth() * scale) / 2.f, 5.f), scale);
 	}
 
 	/* メッセージ表示 */
 	if (GetGame()->GetState() == Game::EGameClear) {
-		DrawTexture(renderer, mGameClear, Vector2(WINDOW_WIDTH / 2 - 78.0f, WINDOW_HEIGHT / 2 - 38.0f), 4.0f);
+		scale = 4.f;
+		DrawTexture(renderer, mGameClear, Vector2((WINDOW_WIDTH - mGameClear->GetWidth() * scale) / 2.f, (WINDOW_HEIGHT - mGameClear->GetHeight() * scale) / 2.f), scale);
 	}
 	else if (GetGame()->GetState() == Game::EGameOver) {
-		DrawTexture(renderer, mGameOver, Vector2(WINDOW_WIDTH / 2 - 64.0f, WINDOW_HEIGHT / 2 - 38.0f), 4.0f);
+		scale = 4.f;
+		DrawTexture(renderer, mGameOver, Vector2((WINDOW_WIDTH - mGameOver->GetWidth() * scale) / 2.f, (WINDOW_HEIGHT - mGameOver->GetHeight() * scale) / 2.f), scale);
 	}
 }
 

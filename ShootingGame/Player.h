@@ -32,7 +32,7 @@ private:
 	class InputComponent* ic;
 	class CollisionComponent* mCircle;
 	
-	std::vector<std::vector<SDL_Texture*>> anims;
+	std::vector<std::vector<class Texture*>> anims;
 
 	unsigned int pState;	// キャラクターの状態を管理するビット列
 	float mLaserCooldown;

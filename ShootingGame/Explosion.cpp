@@ -9,13 +9,14 @@
 #include "Explosion.h"
 #include "Game.h"
 #include "AnimSpriteComponent.h"
+#include "Texture.h"
 
 Explosion::Explosion(Game* game)
 	:Actor(game)
 {
 	/* AnimSpriteComponentÇê∂ê¨ */
 	asc = new AnimSpriteComponent(this);
-	std::vector<SDL_Texture*> anim = {
+	std::vector<Texture*> anim = {
 		game->GetTexture("Assets/Explosion/Explosion01.png"),
 		game->GetTexture("Assets/Explosion/Explosion02.png"),
 		game->GetTexture("Assets/Explosion/Explosion03.png"),

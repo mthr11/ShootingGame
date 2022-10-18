@@ -8,13 +8,12 @@
 
 #include "UIScreen.h"
 #include "Game.h"
+#include "Texture.h"
 
 UIScreen::UIScreen(Game* game)
 	:mGame(game)
-	, mTitle(nullptr)
-	, mBackground(nullptr)
-	, mTexWidth(0)
-	, mTexHeight(0)
+	//, mTitle(nullptr)
+	//, mBackground(nullptr)
 	, mTitlePos(0.0f, 300.0f)
 	, mBGPos(0.0f, 250.0f)
 	, mState(EActive)
@@ -35,16 +34,16 @@ void UIScreen::Update(float deltaTime)
 
 void UIScreen::Draw(SDL_Renderer* renderer)
 {
-	// Draw background (if exists)
-	if (mBackground)
-	{
-		DrawTexture(renderer, mBackground, mBGPos);
-	}
-	// Draw title (if exists)
-	if (mTitle)
-	{
-		DrawTexture(renderer, mTitle, mTitlePos);
-	}
+	//// Draw background (if exists)
+	//if (mBackground)
+	//{
+	//	DrawTexture(renderer, mBackground, mBGPos);
+	//}
+	//// Draw title (if exists)
+	//if (mTitle)
+	//{
+	//	DrawTexture(renderer, mTitle, mTitlePos);
+	//}
 	// Override in subclasses to draw any textures
 }
 
@@ -58,50 +57,44 @@ void UIScreen::Close()
 	mState = EClosing;
 }
 
-void UIScreen::DrawTexture(SDL_Renderer* renderer, SDL_Texture* texture,
+void UIScreen::DrawTexture(SDL_Renderer* renderer, Texture* texture,
 	const Vector2& offset, float scale)
 {
-	// Set width/height
-	SDL_QueryTexture(texture, nullptr, nullptr, &mTexWidth, &mTexHeight);
-
-	SDL_Rect r;
-	r.w = static_cast<int>(mTexWidth * scale);
-	r.h = static_cast<int>(mTexHeight * scale);
-	r.x = static_cast<int>(offset.x);
-	r.y = static_cast<int>(offset.y);
+	SDL_Rect dst;
+	dst.w = static_cast<int>(texture->GetWidth() * scale);
+	dst.h = static_cast<int>(texture->GetHeight() * scale);
+	dst.x = static_cast<int>(offset.x);
+	dst.y = static_cast<int>(offset.y);
 
 	// Draw (have to convert angle from radians to degrees, and clockwise to counter)
 	SDL_RenderCopyEx(renderer,
-		texture,
+		texture->GetTexture(),
 		nullptr,
-		&r,
+		&dst,
 		0.0f,
 		nullptr,
 		SDL_FLIP_NONE);
 }
 
-void UIScreen::DrawTextureEx(struct SDL_Renderer* renderer, SDL_Texture* texture, SDL_FRect* srcrect,
+void UIScreen::DrawTextureEx(struct SDL_Renderer* renderer, Texture* texture, SDL_FRect* srcrect,
 	const Vector2& offset, float scale)
 {
-	// Set width/height
-	SDL_QueryTexture(texture, nullptr, nullptr, &mTexWidth, &mTexHeight);
+	SDL_Rect src, dst;
+	src.w = static_cast<int>(texture->GetWidth() * srcrect->w);
+	src.h = static_cast<int>(texture->GetHeight() * srcrect->h);
+	src.x = static_cast<int>(texture->GetWidth() * srcrect->x);
+	src.y = static_cast<int>(texture->GetHeight() * srcrect->y);
 
-	SDL_Rect r1, r2;
-	r1.w = static_cast<int>(mTexWidth * srcrect->w);
-	r1.h = static_cast<int>(mTexHeight * srcrect->h);
-	r1.x = static_cast<int>(mTexWidth * srcrect->x);
-	r1.y = static_cast<int>(mTexHeight * srcrect->y);
-
-	r2.w = static_cast<int>(mTexWidth * srcrect->w * scale);
-	r2.h = static_cast<int>(mTexHeight * srcrect->h * scale);
-	r2.x = static_cast<int>(offset.x);
-	r2.y = static_cast<int>(offset.y);
+	dst.w = static_cast<int>(texture->GetWidth() * srcrect->w * scale);
+	dst.h = static_cast<int>(texture->GetHeight() * srcrect->h * scale);
+	dst.x = static_cast<int>(offset.x);
+	dst.y = static_cast<int>(offset.y);
 
 	// Draw (have to convert angle from radians to degrees, and clockwise to counter)
 	SDL_RenderCopyEx(renderer,
-		texture,
-		&r1,
-		&r2,
+		texture->GetTexture(),
+		&src,
+		&dst,
 		0.0f,
 		nullptr,
 		SDL_FLIP_NONE);

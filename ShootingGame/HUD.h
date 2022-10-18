@@ -22,13 +22,9 @@ public:
 protected:
 	//void UpdateHealth(float deltaTime);
 
-	struct SDL_Texture* mHealthOn;
-	struct SDL_Texture* mHealthOff;
-	struct SDL_Texture* mBossHealth;
-	struct SDL_Texture* mGameClear;
-	struct SDL_Texture* mGameOver;
-
-	/* width/height of BossHealth texture */
-	int mBHTexWidth;
-	int mBHTexHeight;
+	class Texture* mHealthOn;
+	class Texture* mHealthOff;
+	class Texture* mBossHealth;
+	class Texture* mGameClear;
+	class Texture* mGameOver;
 };
