@@ -62,13 +62,6 @@ Player::~Player() {
 }
 
 void Player::UpdateActor(float deltaTime) {
-	if (GetGame()->GetState() == Game::EGameplay) {
-		if (mHealth <= 0) {
-			SetState(EDead);
-			GetGame()->SetState(Game::EGameOver);
-		}
-	}
-
 	mLaserCooldown -= deltaTime;
 
 	Vector2 pos = GetPosition();

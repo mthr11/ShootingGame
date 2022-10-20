@@ -18,6 +18,8 @@
 #include "HUD.h"
 #include <iostream>
 #include "Texture.h"
+#include "SceneManager.h"
+#include "Scene.h"
 
 Game::Game()
 	:mWindow(nullptr)
@@ -88,15 +90,15 @@ void Game::ProcessInput()
 	}
 
 	const Uint8* keyState = SDL_GetKeyboardState(NULL);
-	if (mGameState == EMainMenu && keyState[SDL_SCANCODE_RETURN]) {
-		mGameState = EGameplay;
-	}
-	else if (keyState[SDL_SCANCODE_ESCAPE])
+	if (keyState[SDL_SCANCODE_ESCAPE])
 	{
 		mGameState = EQuit;
 	}
 
-	if (mGameState == EGameplay || mGameState == EGameClear) {
+	sm->ProcessInput(keyState);
+
+	std::string scene = sm->GetScene()->GetName();
+	if (scene == "Gameplay" || scene == "Gameclear") {
 		mUpdatingActors = true;
 		for (auto actor : mActors)
 		{
@@ -119,50 +121,38 @@ void Game::UpdateGame()
 	}
 	mTicksCount = SDL_GetTicks();
 
-	if (mGameState == EGameplay || mGameState == EGameClear || mGameState == EGameOver) {
-		if (mWaveState == EWave1) {
-			if (mWaveEnemys.at(0).empty()) {
-				mWaveState = EWave2;
-				for (auto en : mWaveEnemys.at(1)) {
-					en->SetState(Actor::ESpawn);
-				}
-			}
-		}
-		else if (mWaveState == EWave2) {
-			if (mWaveEnemys.at(1).empty())
-				mGameState = EGameClear;
-		}
+	// Update scene
+	sm->Update(deltaTime);
 
-		// Update all actors
-		mUpdatingActors = true;
-		for (auto actor : mActors)
-		{
-			actor->Update(deltaTime);
-		}
-		mUpdatingActors = false;
+	// Update all actors
+	mUpdatingActors = true;
+	for (auto actor : mActors)
+	{
+		actor->Update(deltaTime);
+	}
+	mUpdatingActors = false;
 
-		// Move any pending actors to mActors
-		for (auto pending : mPendingActors)
-		{
-			mActors.emplace_back(pending);
-		}
-		mPendingActors.clear();
+	// Move any pending actors to mActors
+	for (auto pending : mPendingActors)
+	{
+		mActors.emplace_back(pending);
+	}
+	mPendingActors.clear();
 
-		// Add any dead actors to a temp vector
-		std::vector<Actor*> deadActors;
-		for (auto actor : mActors)
+	// Add any dead actors to a temp vector
+	std::vector<Actor*> deadActors;
+	for (auto actor : mActors)
+	{
+		if (actor->GetState() == Actor::EDead)
 		{
-			if (actor->GetState() == Actor::EDead)
-			{
-				deadActors.emplace_back(actor);
-			}
+			deadActors.emplace_back(actor);
 		}
+	}
 
-		// Delete dead actors (which removes them from mActors)
-		for (auto actor : deadActors)
-		{
-			delete actor;
-		}
+	// Delete dead actors (which removes them from mActors)
+	for (auto actor : deadActors)
+	{
+		delete actor;
 	}
 
 	// Update UI screens
@@ -211,30 +201,16 @@ void Game::GenerateOutput()
 
 void Game::LoadData()
 {
-	// UI elements
-	mHUD = new HUD(this);
-
-	// Create player's ship
-	mPlayer = new Player(this);
-	mPlayer->SetPosition(Vector2(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT - 40.0f));
-	mPlayer->SetRotation(Math::PiOver2);
-	mPlayer->SetScale(2.0f);
-
-	/* Enemyを生成 */
-	Crow* mCrow;
-	const int numCrow = 5;
-	for (int i = 0; i < numCrow; i++) {
-		mCrow = new Crow(this,
-			Vector2(WINDOW_WIDTH / 2 + (WINDOW_WIDTH / 2 + (WINDOW_WIDTH - 200.0f) / 5.0f * (i + 1)) * powf(-1.0f, (float)(i % 2)), 50.0f + i * 40.0f));
-		mCrow->SetScale(2.0f);
-		//mCrow->SetState(Actor::EPaused);	// デバッグ用
-	}
-
-	Owl* mOwl;
-	mOwl = new Owl(this, Vector2(WINDOW_WIDTH / 2, -150.0f));
-	mOwl->SetScale(3.0f);
-	mOwl->SetState(Actor::EPaused);
-	//mOwl->SetState(Actor::ESpawn);	// デバッグ用
+	/* Scene elements */
+	sm = new SceneManager(this);
+	sm->Register(new STitle(sm));
+	sm->Register(new SGameplay(sm));
+	sm->Register(new SGameclear(sm));
+	sm->Register(new SGameover(sm));
+	sm->Register(new SResult(sm));
+	sm->Register(new SHowto(sm));
+	sm->ChangeScene("Title");
+	//sm->ChangeScene("GamePlay");	// debug
 }
 
 void Game::UnloadData()
@@ -383,4 +359,14 @@ void Game::RemoveSprite(SpriteComponent* sprite)
 	// (We can't swap because it ruins ordering)
 	auto iter = std::find(mSprites.begin(), mSprites.end(), sprite);
 	mSprites.erase(iter);
+}
+
+void Game::CreatePlayer()
+{
+	mPlayer = new Player(this);
+}
+
+void Game::CreateHUD()
+{
+	mHUD = new HUD(this);
 }

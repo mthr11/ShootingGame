@@ -12,6 +12,8 @@
 #include "Player.h"
 #include "Owl.h"
 #include "Texture.h"
+#include "SceneManager.h"
+#include "Scene.h"
 
 HUD::HUD(Game* game)
 	:UIScreen(game)
@@ -35,17 +37,18 @@ void HUD::Update(float deltaTime)
 void HUD::Draw(SDL_Renderer* renderer)
 {
 	float scale = 0.f;
+	std::string scene = mGame->GetSceneManager()->GetScene()->GetName();
 
 	/* プレイヤーのヘルス表示 */
-	int h = 0;
-	if (mGame->GetState() == Game::EGameplay || mGame->GetState() == Game::EGameClear) {
-		h = mGame->GetPlayer()->GetHealth();
+	int cnt = 0;
+	if (scene == "Gameplay" || scene == "Gameclear") {
+		cnt = mGame->GetPlayer()->GetHealth();
 	}
 	for (int i = 0; i < MAX_PLAYER_HEALTH; i++) {
-		Texture* healthTex = h ? mHealthOn : mHealthOff;
+		Texture* healthTex = cnt ? mHealthOn : mHealthOff;
 		scale = 2.f;
 		DrawTexture(renderer, healthTex, Vector2(5.f, WINDOW_HEIGHT - 5.f - healthTex->GetHeight() * scale * (1 + i)), scale);
-		if (h > 0) h--;
+		if (cnt > 0) cnt--;
 	}
 
 	/* Owlのヘルス表示 */
@@ -64,11 +67,11 @@ void HUD::Draw(SDL_Renderer* renderer)
 	}
 
 	/* メッセージ表示 */
-	if (GetGame()->GetState() == Game::EGameClear) {
+	if (scene == "Gameclear") {
 		scale = 4.f;
 		DrawTexture(renderer, mGameClear, Vector2((WINDOW_WIDTH - mGameClear->GetWidth() * scale) / 2.f, (WINDOW_HEIGHT - mGameClear->GetHeight() * scale) / 2.f), scale);
 	}
-	else if (GetGame()->GetState() == Game::EGameOver) {
+	else if (scene == "Gameover") {
 		scale = 4.f;
 		DrawTexture(renderer, mGameOver, Vector2((WINDOW_WIDTH - mGameOver->GetWidth() * scale) / 2.f, (WINDOW_HEIGHT - mGameOver->GetHeight() * scale) / 2.f), scale);
 	}

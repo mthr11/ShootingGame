@@ -12,6 +12,8 @@
 #include "MoveComponent.h"
 #include "CollisionComponent.h"
 #include "Player.h"
+#include "SceneManager.h"
+#include "Scene.h"
 
 ELaser::ELaser(Game* game, float rotation)
 	:Actor(game)
@@ -37,7 +39,7 @@ void ELaser::UpdateActor(float deltaTime) {
 	}
 
 	/* Player‚ÆÕ“Ë‚µ‚½‚©‚Ç‚¤‚© */
-	if (GetGame()->GetState() == Game::EGameplay) {
+	if (GetGame()->GetSceneManager()->GetScene()->GetName() == "Gameplay") {
 		Player* p = GetGame()->GetPlayer();
 		if (Intersect(*mCircle, *(p->GetCircle()))) {
 			int health = p->GetHealth();
